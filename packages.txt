@@ -1,0 +1,8 @@
+_pacman
+kitty
+firefox
+neofetch
+networkmanager
+blueman
+_yay
+autotiling-git
