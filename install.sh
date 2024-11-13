@@ -1,10 +1,10 @@
-#! bin/bash
+#!/bin/bash
 
 #check if yay installed
 
-#install pacman 
+#install pacman packages
 
-#isstall yay 
+#install yay packages
 
 # go through packages file
     #run pacman
@@ -13,6 +13,7 @@
 
 yayInstalled="false"
 notinstalled=()
+installedPackages=()
 
 yayCheck()
 {
@@ -21,60 +22,133 @@ yayCheck()
         yayInstalled="true"
     else
         echo "yay not installed"
-        exit
+        exit 1
     fi
 }
 
-pacmanInstall
+pacmanInstall()
 {
+    echo "Installing AUR packages"
+
     if pacman -Qs "$package" > dev/null; then
         sudo pacman -S --noconfirm "$package"
-    
+
+        installedPackages+=("$package")
+
     else
-        notinstalled+=('$package')
+        notinstalled+=("$package")
 }
 
-yayInstall
+yayInstall()
 {
-    if yay -Qs"$package" > dev/null; then
+    echo "Installing AUR packages"
+
+    if yay -Qs "$package" > dev/null; then
         yay -S --noconfirm "$package"
+
+        installedPackages+=("$package")
+
     else
-        notinstalled+=('$package')
+        notinstalled+=("$package")
 }
 
-fileReader
+fileReader()
 {
+    pacman=false
+    yay=false
+
+    # Check if packages.txt exists
+    if [ ! -f packages.txt ]; then
+        echo "Error: packages.txt file not found!"
+        exit 1
+    fi
+
+    # Reads through package.txt
     while IFS= read -r package; do
-        if [[-z "$package" || "$package" =~ ^# ]]; then
+        if [[ -z "$package" || "$package" =~ ^# ]]; then
             continue
         fi
 
-        if [[ "$package" == "pacman"]]; then
+        if [[ "$package" == "_pacman" ]]; then
             pacman="true"
             yay="false"
             continue
         fi
 
-        if [["$package" == "yay"]]; then
+        if [[ "$package" == "_yay" ]]; then
             pacman="false"
             yay="true"
             continue
         fi
 
         if $pacman; then
-            pacmanInstall
+            pacmanInstall "$package"
         elif $yay; then
-            yayInstall
+            yayInstall "$package"
         else
-            echo "bruh u fucked up"
-            exit
+            echo "installer type error"
+            exit 1
+        fi
 
-        done <packages.txt
-        yay -Yc	
+    done <packages.txt
+        
 }
 
-main
+logger()
+{ 
+    logFile="log_$(date +%H_%M_%S_%d_%m_%Y).txt"
+    touch "$logFile"
+    
+    if [ ${#installedPackages[@]} -gt 0 ]; then
+        echo "Installed" >> "$logFile"
+        for pkg in "${installedPackages[@]}"; do
+            echo "- $pkg"
+        done
+    else
+        echo "No packages were installed."
+    fi
+    if [ ${#notinstalled[@]} -gt 0 ]; then
+        echo "Not Installed" >> "$logFile"
+        for pack in "${notinstalled[@]}"; do 
+            echo "$pack" >> "$logFile"
+        done
+    else
+        echo "All packages were installed successfully."
+    fi
+
+    echo "All packages have been logged to $logFile"
+   
+}
+
+cleanUp()
 {
-    # updates system
-    sudo pacman -Syu
+    echo "clean up started"
+
+    yay -Yc --noconfirm
+    sudo pacman -Sc --noconfirm
+
+    echo "cleaning up done"
+}
+
+main()
+{
+    # Update system with error handling
+    echo "Updating system..."
+    sudo pacman -Syu --noconfirm
+    if [ $? -ne 0 ]; then
+        echo "Error: System update failed!"
+        exit 1
+    fi
+
+    # Check if yay is installed
+    yayCheck
+
+    # Process the packages file
+    fileReader
+
+    # cleans up cache
+    cleanUp
+
+    # Logs installed and not installed files
+    logger
 }

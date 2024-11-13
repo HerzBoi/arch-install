@@ -1,8 +1,5 @@
 _pacman
-kitty
-firefox
-neofetch
-networkmanager
-blueman
+#add list of pacman packages
+
 _yay
-autotiling-git
+#add list of AUR packages
