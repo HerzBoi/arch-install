@@ -8,6 +8,7 @@ This script automates the process of installing packages on an Arch Linux system
 - **Package Installation**: Installs packages from `pacman` or `yay` based on the sections in the `packages.txt` file.
 - **Logging**: Tracks which packages were successfully installed and which failed.
 - **Clean-up**: Removes orphaned packages using `yay -Yc` and `pacman -Sc`.
+- **Status Reporting**: After installation, it reports which packages were installed successfully and logs any failures.
 
 ## Requirements
 
