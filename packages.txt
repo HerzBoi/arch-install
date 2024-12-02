@@ -23,4 +23,3 @@ wine
 _yay
 #add list of AUR packages
 autotiling-git
-balena-etcher
