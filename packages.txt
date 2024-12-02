@@ -1,5 +1,26 @@
 _pacman
 #add list of pacman packages
+pulseaudio
+neofetch
+networkmanager
+blueman
+polybar
+dunst
+picom
+discord
+steam
+firefox
+kitty
+gimp
+obsidian
+okular
+flameshot
+ranger
+git
+lutris
+wine
 
 _yay
 #add list of AUR packages
+autotiling-git
+balena-etcher

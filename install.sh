@@ -130,6 +130,8 @@ cleanUp()
     echo "cleaning up done"
 }
 
+# TODO download graphics drivers if -g argument passed
+
 main()
 {
     # Update system with error handling
