@@ -52,11 +52,11 @@ Comment lines (lines starting with ``#``) will be ignored.
 
 3. Make the Script Executable:
 ```bash
-chmod +x install_packages.sh
+chmod +x install.sh
 ```
 4. Run the Script:
 ```bash
-./install_packages.sh
+./install.sh
 ```
 - The script will first update the system using pacman -Syu.
 - It will then process the packages.txt file, installing the listed packages.
